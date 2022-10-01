@@ -110,6 +110,9 @@ jobs:
              cd frontend
              npm install
              npm audit --audit-level=critical
+      - save_cache:
+          paths: [backend/node_modules]
+          key: bbuild
 
 
   scan-backend:
