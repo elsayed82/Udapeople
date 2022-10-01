@@ -101,7 +101,7 @@ jobs:
     docker:
       - image: cimg/node:13.8.0
     steps:
-    - checkout
+      - checkout
       - restore_cache:
           keys: [fbuild]
       - run:
@@ -110,9 +110,7 @@ jobs:
              cd frontend
              npm install
              npm audit --audit-level=critical
-      - save_cache:
-          paths: [backend/node_modules]
-          key: bbuild
+      
 
 
   scan-backend:
@@ -128,9 +126,7 @@ jobs:
              cd backend
              npm install
              npm audit --audit-level=critical
-      - save_cache:
-          paths: [backend/node_modules]
-          key: bbuild
+      
       
 
 #   deploy-infrastructure:
