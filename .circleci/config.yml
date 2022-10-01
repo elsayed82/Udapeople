@@ -95,9 +95,7 @@ jobs:
              cd backend
              npm install
              npm run test
-      - save_cache:
-          paths: [backend/node_modules]
-          key: bbuild
+
             
   scan-frontend:
     docker:
