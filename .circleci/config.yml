@@ -31,6 +31,7 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
+            #!/bin/bash:
             aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.Workflow_ID >>
             aws s3 rm s3://udapeople-<<parameters.Workflow_ID>> --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>
@@ -212,8 +213,8 @@ jobs:
              command: |
                  cd .circleci/ansible
                  cat inventory.txt
-
                  ansible-playbook -i inventory.txt configure-server.yml
+
       - destroy-environment           
             
       # Here's where you will add some code to rollback on failure      
