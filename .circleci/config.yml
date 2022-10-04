@@ -26,6 +26,7 @@ commands:
      - run:
          name: install node.js 13
          command:  |
+            sudo apt-get update
             curl -fssL https://deb.nodesource.com/setup_14.x | sudo -E bash -
             sudo apt install -y node.js
           
