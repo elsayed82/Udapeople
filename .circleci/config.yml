@@ -108,13 +108,16 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [fbuild]
+          keys: [ftest]
       - run:
           name: Front-end Test
           command: |
              cd frontend
              npm install
              npm run test
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: ftest      
       
                 
   test-backend:
@@ -123,14 +126,16 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [bbuild]
+          keys: [btest]
       - run:
           name: Back-end Test
           command: |
              cd backend
              npm install
              npm run test
-
+      - save_cache:
+          paths: [backend/node_modules]
+          key: btest
             
   scan-frontend:
     docker:
@@ -138,7 +143,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [fbuild]
+          keys: [fscan]
       - run:
           name: front-end Scan
           command: |
@@ -146,7 +151,9 @@ jobs:
              npm install
              npm audit fix --audit-level=critical --force
              npm audit --audit-level=critical
-      
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: fscan
 
 
   scan-backend:
@@ -155,7 +162,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [bbuild]
+          keys: [bscan]
       - run:
           name: Back-end Scan
           command: |
@@ -164,8 +171,10 @@ jobs:
              npm audit fix --audit-level=critical --force
              npm audit fix --audit-level=critical --force
              npm audit --audit-level=critical
-      
-      
+      - save_cache:
+          paths: [backend/node_modules]
+          key: bscan
+       
 
   deploy-infrastructure:
     docker:
@@ -173,6 +182,10 @@ jobs:
     steps:
       - checkout
       - install_awscli
+      - run:
+          name: install dependencies
+          command: |
+             yum install -y tar gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -236,17 +249,17 @@ jobs:
       
     steps:
       - checkout
-      - install_awscli
+      
       
       - run:
           name: Run migrations
           command: |
             cd backend
             npm install
-            npm audit fix --force
+            
             npm run migrations > migrations_dump.txt
-            npm fund
-            npm audit fix --force
+            
+            
             
             
       - run:
@@ -254,7 +267,7 @@ jobs:
           command: |
            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
            then
-             curl https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+             curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
            
            fi
       - destroy-environment
