@@ -178,10 +178,13 @@ jobs:
 
   deploy-infrastructure:
     docker:
-      - image: img/base:stable
+      - image: amazon/aws-cli
     steps:
       - checkout
-      - install_awscli
+      - run:
+          name: install dependencies
+          command: |
+            yum install -y tar gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -225,7 +228,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: img/base:stable
+      - image: amazon/aws-cli
     steps:
       - checkout
       
@@ -233,7 +236,7 @@ jobs:
           fingerprints: [0a:ee:76:96:9d:ee:28:c3:38:6c:92:a7:43:0d:92:fe]
       - attach_workspace:
           at: ~/   
-      - install_awscli    
+          
       - install_ansible     
       
       - run:
