@@ -228,14 +228,16 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: cimg/base:stable
+      - image: img/base:stable
     steps:
       - checkout
-      - install_ansible
+      
       - add_ssh_keys:
           fingerprints: [0a:ee:76:96:9d:ee:28:c3:38:6c:92:a7:43:0d:92:fe]
       - attach_workspace:
-          at: ~/    
+          at: ~/   
+      - install_awscli    
+      - install_ansible     
       
       - run:
            name: Configure Server
